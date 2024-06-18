@@ -1,4 +1,8 @@
-#
+"""
+Oliver June 2024
+"""
+from __future__ import annotations
+
 import re
 import string
 from typing import List, Dict, Any
@@ -29,6 +33,9 @@ METADATA_MAP = {
 
 
 class Mp3Tag:
+    """
+    object
+    """
     album: str
     artists: List[str]  # comprised of composer, artist1 and artist2 from mp3 tag
     artwork: bytes
@@ -42,7 +49,7 @@ class Mp3Tag:
     year: int
 
 
-def decode_synchsafe(x: int | bytes):
+def decode_synchsafe(x: int | bytes) -> int:
     """
     decode bytes/int from synchronization safe format to integer
     https://phoxis.org/2010/05/08/synch-safe/
@@ -50,11 +57,11 @@ def decode_synchsafe(x: int | bytes):
     :return: integer
     """
     if isinstance(x, bytes):
-        x = int.from_bytes(x, byteorder="big")
+        x = int.from_bytes(x)
 
-    if (x & 0x808080):
+    if x & 0x808080:
         # ignore MSB
-        x = x & 0x7f7f7f7f
+        x &= 0x7f7f7f7f
 
     ans = 0
     a = x & 0xff
@@ -62,10 +69,10 @@ def decode_synchsafe(x: int | bytes):
     c = (x >> 16) & 0xff
     d = (x >> 24) & 0xff
 
-    ans = ans | a
-    ans = ans | (b << 7)
-    ans = ans | (c << 14)
-    ans = ans | (d << 21)
+    ans |= a
+    ans |= b << 7
+    ans |= c << 14
+    ans |= d << 21
 
     return ans
 
@@ -84,11 +91,11 @@ def extract_text(data: bytes) -> str:
     return ''.join(res)
 
 
-def extract_image_data(data: bytes, tag: bytes) -> bytes:
+def extract_image_data(data: bytes, tag: bytes) -> bytes | None:
     """
        extract image byte data from mp3 file frame
        https://docs.fileformat.com/image/jpeg/
-       :param frame_data: frame data
+       :param data: frame data
        :param tag: mp3 tag
        :return: image bytes
        """
