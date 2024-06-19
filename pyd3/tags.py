@@ -99,18 +99,13 @@ def extract_image_data(data: bytes, tag: bytes) -> bytes | None:
        :param tag: mp3 tag
        :return: image bytes
        """
-    # get text encoding
-    text_encoding = data[0]
-    encoding = FRAME_ENCODING[text_encoding]
-    # find mime type and determine starting point of image data
-    match = re.search(r'image/[a-z]+', data.decode(encoding))
-    mime_type = data[match.start():match.end()]
-    if mime_type != b'image/jpeg':
+    if data[1:11] != b'image/jpeg':  # check mime type is JPEG
         return None
     # get first instance of jpeg image start
     img_start = tag.find(JPEG_SOI_MARKER)
     # get last instance of jpeg image end marker incase of EXIF
     img_end = tag.rfind(JPEG_EOI_MARKER)
+
     img_data = tag[img_start:img_end + 2]
     return img_data
 
@@ -167,20 +162,21 @@ def get_tags(filename: str) -> Mp3Tag | None:
     :return: Mp3Tags object of mp3 file tag attributes
     """
     # read data
-    with open(filename, "rb") as f:
-        # check if ID3v2 file (first 3 bytes should be ID3)
-        if f.read(3) != b'ID3':
-            return None
-        f.seek(6)  # skip to metadata tag size
-        # get the size of the tag
-        size = decode_synchsafe(f.read(4))
-        # get the mp3 tag
-        tag = f.read(size)
-
+    file = open(filename, "rb")
+    # check if ID3v2 file (first 3 bytes should be ID3)
+    if file.read(3) != b'ID3':
+        return None
+    file.seek(6)  # skip to metadata tag size
+    # get the size of the tag
+    size = decode_synchsafe(file.read(4))
+    # get the mp3 tag
+    tag = file.read(size)
     frames = dict()
 
     for frame_id in FRAME_IDS:
         # check for frame in tag
         frames[frame_id] = get_frame_data(tag, frame_id)
+
+    file.close()
 
     return format_tags(frames)
