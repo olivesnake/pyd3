@@ -12,9 +12,9 @@ from other options.
 ## Get Started
 
 ```python
-from pyd3 import get_tags
+from pyd3 import get_tag
 
-metadata = get_tags("song.mp3")
+metadata = get_tag("song.mp3")
 ``` 
 
 ## Examples
@@ -23,12 +23,12 @@ metadata = get_tags("song.mp3")
 
 ```python
 import sqlite3
-from pyd3 import get_tags
+from pyd3 import get_tag
 
 con = sqlite3.connect("mydb.db")
 cur = con.cursor()
 
-metadata = get_tags("song.mp3")
+metadata = get_tag("song.mp3")
 
 for artist in metadata.artists:
     # artist attribute is a list of strings sourced from the composer, artist1, and artist2 tags
@@ -47,9 +47,9 @@ con.close()
 ### Create JPEG file of album artwork
 
 ```python
-from pyd3 import get_tags
+from pyd3 import get_tag
 
-tags = get_tags("song.mp3")
+tags = get_tag("song.mp3")
 
 with open("artwork.jpeg", mode="wb") as file:
     file.write(tags.artwork)
