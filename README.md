@@ -31,7 +31,7 @@ cur = con.cursor()
 metadata = get_tag("song.mp3")
 
 for artist in metadata.artists:
-    # artist attribute is a list of strings sourced from the composer, artist1, and artist2 tags
+    # artist attribute is a list of strings sourced from the composer, artist, and accompaniment tags
     cur.execute("INSERT INTO artist (name) VALUES (?);", [artist])
 con.commit()
 
