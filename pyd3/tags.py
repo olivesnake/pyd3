@@ -186,7 +186,7 @@ def get_tag(filename: str) -> Mp3Tag | None:
         version = file.read(2)
         if len(version) < 2:
             return None
-        if version[0] != 3:  # reading two bytes to skip over verison revision number
+        if version[0] != 3:  # reading two bytes to skip over version revision number
             raise NotImplementedError("ID3v2.4 not currently supported")
         file.read(1)  # header flags
         # decode tag size encoded as synchsafe
